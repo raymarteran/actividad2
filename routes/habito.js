@@ -1,10 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const Controller = require('../controllers/habitoController.js');
+const HabitoController = require('../controllers/habitoController.js');
 
-router.get('/', Controller.getHabitos);
-router.post('/', Controller.postHabito);
-//mostrar los habitos que no tiene actividades realizadas
-router.get('/habitos-no-actividades-realizadas', Controller.getHabitosNoActividadesRealizadas);
+const habitoController = new HabitoController();
+
+router.get('/', (req, res, next) => {
+    habitoController.getHabitos(req.body)
+    .then((result) => {
+        console.log("result get Habitos", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.post('/', (req, res, next) => {
+    habitoController.postHabito(req.body)
+    .then((result) => {
+        console.log("result post Habito", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.get('/habitos-no-actividades-realizadas', (req, res, next) => {
+    habitoController.getHabitosNoActividadesRealizadas(req.body)
+    .then((result) => {
+        console.log("result get Habitos sin actividades realizadas", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
 
 module.exports = router;

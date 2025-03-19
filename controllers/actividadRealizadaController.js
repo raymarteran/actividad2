@@ -1,90 +1,127 @@
 const actRealizadaModel = require('../models/actRealizadaModel.js');
 const categoriesModel = require('../models/categoriesModel.js');
 
-exports.getActRealizadas = (req, res) => {
-    //si esta vacio dar un mensaje que no hay 
-    let allActR = actRealizadaModel.getActRealizadas();
-    if (allActR.length === 0) {
-        return res.status(400).send('No hay proyectos');
-    } else {
-        res.json(actRealizadaModel.getActRealizadas());    
-    }
-};
+const ActRealizadaModel = new actRealizadaModel();
+const CategoriesModel = new categoriesModel();
 
-exports.postActividadRealizada = (req, res) => {
-    let newAR = req.body;
-    let allActR = actRealizadaModel.getActRealizadas();
-    newAR.id = allActR.length + 1;
-
-    let Exists = allActR.find(act => act.name === newAR.name);
-    if (Exists) {
-        return res.status(400).send('Ya existe una con ese nombre');
-    }
-
-    //antes de guardar validar que la idCategoria exista ya una categoria con ese id
-    let allCategories = categoriesModel.getCategorias();
-    let idCategoria = newAR.idCategoria
-    //convertir categoria siempre en numero
-    idCategoria = parseInt(idCategoria)
-    let categoryExists = allCategories.find(category => category.id === idCategoria);
-    if (!categoryExists) {
-        return res.status(400).send('La categoría no existe debe crear una categoria primero');
+class ActividadRealizadaController {
+    getActRealizadas() {
+        return new Promise((resolve, reject) => {
+            try {
+                const allActR = ActRealizadaModel.getActRealizadas();
+                if (allActR.length === 0) {
+                    reject({ status: 400, message: 'No hay actividades realizadas' });
+                } else {
+                    resolve(allActR);
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
-    //agregar status al crear en pendiente
-    newAR.status = 'pending';
-    
-    actRealizadaModel.postActividadRealizada(newAR);
-    res.json(newAR);
-};
+    postActividadRealizada(body) {
+        return new Promise((resolve, reject) => {
+            try {
+                let newAR = body;
+                let allActR = ActRealizadaModel.getActRealizadas();
+                newAR.id = allActR.length + 1;
 
-exports.getActividadesRealizadasPorFechas = (req, res) => {
-    let startDate = req.query.desde;
-    let endDate = req.query.hasta;
+                // Validar que no exista ya una actividad con el mismo nombre
+                let Exists = allActR.find(act => act.name === newAR.name);
+                if (Exists) {
+                    reject({ status: 400, message: 'Ya existe una actividad con ese nombre' });
+                    return;
+                }
 
-    console.log(startDate, endDate);
-    const actividades = actRealizadaModel.getActividadesRealizadasPorFechas(startDate, endDate);
-    if (!actividades) {
-        res.status(404).json({ message: 'No se encontraron actividades realizadas en ese rango de fechas' });
-        return;
+                // Validar que la categoría exista
+                let allCategories = CategoriesModel.getCategorias();
+                let idCategoria = parseInt(newAR.idCategoria);
+                let categoryExists = allCategories.find(category => category.id === idCategoria);
+                if (!categoryExists) {
+                    reject({ status: 400, message: 'La categoría no existe, debe crear una categoría primero' });
+                    return;
+                }
+
+                // Agregar status al crear en pendiente
+                newAR.status = 'pending';
+
+                // Guardar la nueva actividad realizada
+                ActRealizadaModel.postActividadRealizada(newAR);
+                resolve({ status: 201, message: 'Actividad realizada creada correctamente', actividad: newAR });
+            } catch (error) {
+                reject({ status: 500, error: 'Error al crear la actividad realizada' });
+            }
+        });
     }
-    res.json(actividades);
-};
-//http://localhost:3000/actividadRealizada/actividades-realizadas-por-fechas?desde='2025-02-08'&hasta='2025-02-11'
 
-
-
-exports.getActividadesRealizadasPorNombreActividad = (req, res) => {
-    let name = req.query.name;
-    console.log("name que busca", name)
-    const actividades = actRealizadaModel.getActividadesRealizadasPorNombreActividad(name);
-    if (!actividades) {
-        res.status(404).json({ message: 'No se encontraron actividades realizadas con ese nombre' });
-        return;
+    getActividadesRealizadasPorFechas(desde, hasta) {
+        return new Promise((resolve, reject) => {
+            try {
+                const actividades = ActRealizadaModel.getActividadesRealizadasPorFechas(desde, hasta);
+                if (!actividades) {
+                    reject({ status: 404, message: 'No se encontraron actividades realizadas en ese rango de fechas' });
+                } else {
+                    resolve(actividades);
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
-    res.json(actividades);
+
+    getActividadesRealizadasPorNombreActividad(name) {
+        return new Promise((resolve, reject) => {
+            try {
+                const actividades = ActRealizadaModel.getActividadesRealizadasPorNombreActividad(name);
+                if (!actividades) {
+                    reject({ status: 404, message: 'No se encontraron actividades realizadas con ese nombre' });
+                } else {
+                    resolve(actividades);
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    getActividadesAbiertas() {
+        return new Promise((resolve, reject) => {
+            try {
+                const actividades = ActRealizadaModel.getActividadesAbiertas();
+                if (!actividades) {
+                    reject({ status: 404, message: 'No se encontraron actividades abiertas' });
+                } else {
+                    resolve(actividades);
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    deleteActividadRealizada(id) {
+        return new Promise((resolve, reject) => {
+            try {
+                ActRealizadaModel.deleteActividadRealizada(id);
+                resolve({ status: 200, message: 'Actividad realizada eliminada correctamente' });
+            } catch (error) {
+                reject({ status: 500, error: 'Error al eliminar la actividad realizada' });
+            }
+        });
+    }
+
+    putActividadRealizada(id, body) {
+        return new Promise((resolve, reject) => {
+            try {
+                id = parseInt(id);
+                const updatedActividad = ActRealizadaModel.putActividadRealizada(id, body);
+                resolve({ status: 200, message: 'Actividad realizada actualizada correctamente', actividad: updatedActividad });
+            } catch (error) {
+                reject({ status: 500, error: 'Error al actualizar la actividad realizada' });
+            }
+        });
+    }
 }
 
-exports.getActividadesAbiertas = (req, res) => {
-    const actividades = actRealizadaModel.getActividadesAbiertas();
-    if (!actividades) {
-        res.status(404).json({ message: 'No se encontraron actividades abiertas' });
-        return;
-    }
-    res.json(actividades);
-}
-
-exports.deleteActividadRealizada = (req, res) => {
-    let id = req.params.id;
-    actRealizadaModel.deleteActividadRealizada(id);
-    res.json({ message: 'Actividad realizada eliminada' });
-}
-
-exports.putActividadRealizada = (req, res) => {
-    let id = req.params.id;
-    //convertir el id en number
-    id = parseInt(id)
-    let newAR = req.body;
-    actRealizadaModel.putActividadRealizada(id, newAR);
-    res.json(newAR);
-}
+module.exports = ActividadRealizadaController;

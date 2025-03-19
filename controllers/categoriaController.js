@@ -1,21 +1,57 @@
-const categoriesModel = require('../models/categoriesModel');
+const categoriesModel = require('../models/categoriesModel.js');
 
-exports.getCategorias = (req, res) => {
-    res.json(categoriesModel.getCategorias());
-};
+const CategoriesModel = new categoriesModel();
 
-exports.postCategoria = (req, res) => {
-    let newCategory = req.body;
-    let allCategories = categoriesModel.getCategorias();
-    newCategory.id = allCategories.length + 1;
-
-    //validar que no exista ya una categoria con el mismo name
-    let categoryExists = allCategories.find(category => category.name === newCategory.name);
-    if (categoryExists) {
-        return res.status(400).send('Ya existe una categoría con ese nombre');
+class CategoriaController {
+    getCategorias() {
+        return new Promise((resolve, reject) => {
+            try {
+                const categorias = CategoriesModel.getCategorias();
+                resolve(categorias);
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
+    async postCategoria(body) {
+        try {
+            console.log('body', body);
+            let newCategory = body;
     
-    categoriesModel.postCategory(newCategory);
-    res.json(newCategory);
-};
+            // Esperar a que la promesa se resuelva
+            let allCategories = await CategoriesModel.getCategorias();
+    
+            // Asegurarse de que allCategories sea un array
+            if (!Array.isArray(allCategories)) {
+                console.log('allCategories no es un array, inicializando como array vacío');
+                allCategories = [];
+            }
+    
+            newCategory.id = allCategories.length + 1;
+    
+            console.log('allCategories', allCategories);
+    
+            // Validar que no exista ya una categoría con el mismo nombre
+            let categoryExists = allCategories.find(category => category.name === newCategory.name);
+            console.log('categoryExists', categoryExists);
+            if (categoryExists) {
+                console.log('Ya existe una categoría con ese nombre');
+                return { status: 400, message: 'Ya existe una categoría con ese nombre' };
+            } else {
+                console.log('No existe una categoría con ese nombre');
+            }
+    
+            console.log('Categoría crear', newCategory);
+    
+            // Guardar la nueva categoría
+            CategoriesModel.postCategory(newCategory);
+            return { status: 201, message: 'Categoría creada correctamente', categoria: newCategory };
+        } catch (error) {
+            console.log('Error al crear la categoría', error);
+            return { status: 500, error: 'Error al crear la categoría' };
+        }
+    }
+}
+
+module.exports = CategoriaController;

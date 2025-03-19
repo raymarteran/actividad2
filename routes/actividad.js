@@ -1,8 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const Controller = require('../controllers/actividadController.js');
+const ActividadController = require('../controllers/actividadController.js');
 
-router.get('/', Controller.getActividades);
-router.post('/', Controller.postActividad);
+const actividadController = new ActividadController();
+
+router.get('/', (req, res, next) => {
+    actividadController.getActividades(req.body)
+    .then((result) => {
+        console.log("result get Actividades", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.post('/', (req, res, next) => {
+    actividadController.postActividad(req.body)
+    .then((result) => {
+        console.log("result post Actividad", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
 
 module.exports = router;

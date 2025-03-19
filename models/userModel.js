@@ -5,8 +5,8 @@ const Categorias = require('../database/dataBase.js').Categorias;
 const Actividades = require('../database/dataBase.js').Actividades;
 const ActRealizada = require('../database/dataBase.js').ActRealizada;
 
-const userModel = {
-    getUsers: () => {
+class UsersModels {
+    getUsers () {
         return Users.map(user => {
             const proyectos = Proyectos ? Proyectos.filter(pro => pro.idUser === user.id) : [];
             const habitos = Habitos ? Habitos.filter(hab => hab.idUser === user.id) : [];
@@ -16,12 +16,9 @@ const userModel = {
                 habitos: habitos ? habitos : []
             };
         });
-    },
-    postUser: (user) => {
-        Users.push(user);
-        return user
-    },
-    getActividadesCategoriaUsuario: (idUser, categoria) => {
+    }
+
+    getActividadesCategoriaUsuario (idUser, categoria) {
         //Mostrar las actividades de una categoría determinada de un usuario dado.
         const AllActividades = Actividades.map(act => {
             const categoria = Categorias ? Categorias.filter(cate => cate.id === act.idCategoria) : [];
@@ -42,9 +39,17 @@ const userModel = {
 
 
         return ActividadesCategoriaUsuario
-    },
+    }
+
+    postUser (user) {
+        return new Promise((resolve, reject) => {
+            Users.push(user);
+            resolve();
+        })
+    }
+    
     //Mostrar las últimas 5 actividades realizadas por un usuario, incluyendo el nombre de la actividad y su categoría.
-    getLastActividadesRealizadas: (idUser) => {
+    getLastActividadesRealizadas (idUser) {
         //filtrar por idUser
         const actRe = ActRealizada.filter(act => {
             return act.idUser === idUser;
@@ -55,9 +60,9 @@ const userModel = {
         });
         return ActividadesRealizadasOrdenadas.slice(0, 5);
     }
-}   
+}
 
-module.exports = userModel
+module.exports = UsersModels
 
 
 // para guardar un usuario nuevo ejemplo:

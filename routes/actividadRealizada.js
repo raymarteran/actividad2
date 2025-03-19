@@ -1,20 +1,84 @@
 const express = require('express');
 const router = express.Router();
-const Controller = require('../controllers/actividadRealizadaController.js');
+const ActividadRealizadaController = require('../controllers/actividadRealizadaController.js');
 
-router.get('/', Controller.getActRealizadas);
-router.post('/', Controller.postActividadRealizada);
-//actividades realizadas por rango de fechas
-router.get('/actividades-realizadas-por-fechas', Controller.getActividadesRealizadasPorFechas);
-//buscar actividadres realizadas por nombre de la actividad
-router.get('/actividadesrealizadas-name', Controller.getActividadesRealizadasPorNombreActividad);
-//mostrar actividades abiertas sin fecha de finailizacion
-router.get('/actividades-activas', Controller.getActividadesAbiertas);
-//Eliminar actividad realizada y sus relaciones.
-router.delete('/:id', Controller.deleteActividadRealizada);
-//Modificar actividad realizada, tanto sus propios detalles como su relación hacia la actividad.
-router.put('/:id', Controller.putActividadRealizada);
+const actividadRealizadaController = new ActividadRealizadaController();
 
+router.get('/', (req, res, next) => {
+    actividadRealizadaController.getActRealizadas(req.body)
+    .then((result) => {
+        console.log("result get Actividades Realizadas", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
 
+router.post('/', (req, res, next) => {
+    actividadRealizadaController.postActividadRealizada(req.body)
+    .then((result) => {
+        console.log("result post Actividad Realizada", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.get('/actividades-realizadas-por-fechas', (req, res, next) => {
+    actividadRealizadaController.getActividadesRealizadasPorFechas(req.query)
+    .then((result) => {
+        console.log("result get Actividades Realizadas por Fechas", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.get('/actividadesrealizadas-name', (req, res, next) => {
+    actividadRealizadaController.getActividadesRealizadasPorNombreActividad(req.query)
+    .then((result) => {
+        console.log("result get Actividades Realizadas por Nombre", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.get('/actividades-activas', (req, res, next) => {
+    actividadRealizadaController.getActividadesAbiertas(req.body)
+    .then((result) => {
+        console.log("result get Actividades Abiertas", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.delete('/:id', (req, res, next) => {
+    actividadRealizadaController.deleteActividadRealizada(req.params.id)
+    .then((result) => {
+        console.log("result delete Actividad Realizada", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
+router.put('/:id', (req, res, next) => {
+    actividadRealizadaController.putActividadRealizada(req.params.id, req.body)
+    .then((result) => {
+        console.log("result put Actividad Realizada", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
 
 module.exports = router;
