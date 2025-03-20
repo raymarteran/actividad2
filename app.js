@@ -36,10 +36,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 
 app.get('/', (req, res) => {
-    res.render('index', {
-        title: 'Inicio',
-        message: '¡Bienvenido a la página de inicio!'
-    });
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const userModel = require('./models/userModel.js');
