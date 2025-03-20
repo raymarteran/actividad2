@@ -71,6 +71,22 @@ class ActividadController {
             }
         });
     }
+
+    getActividadById(id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const actividad = await Actividad.findById(id).populate('idCategoria').populate('idUser');
+                if (!actividad) {
+                    resolve({ status: 404, message: 'Actividad no encontrada' });
+                } else {
+                    resolve(actividad);
+                }
+            } catch (error) {
+                console.error("Error al obtener la actividad:", error);
+                reject({ status: 500, error: 'Error al obtener la actividad' });
+            }
+        });
+    }
 }
 
 module.exports = ActividadController;

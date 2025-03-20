@@ -37,4 +37,15 @@ router.delete('/:id', (req, res, next) => {
     });
 });
 
+router.get('/:id', (req, res, next) => {
+    actividadController.getActividadById(req.params.id)
+    .then((result) => {
+        console.log("result get Actividad", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
 module.exports = router;
