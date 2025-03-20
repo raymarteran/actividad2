@@ -4,7 +4,6 @@ const UsersController = require('../controllers/userController.js');
 
 const usersController = new UsersController();
 
-
 router.get('/', (req, res, next)=>{
     usersController.getUsers(req.body)
     .then((result) => {

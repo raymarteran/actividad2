@@ -1,4 +1,17 @@
-const Habitos = require('../database/dataBase.js').Habitos;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const HabitoSchema = new Schema({
+  name: { type: String, required: true, unique: true },
+  idActividad: { type: Number, required: true },
+  idUser: { type: Number, required: true }
+});
+
+module.exports = mongoose.model('Habito', HabitoSchema);
+
+
+
+/*const Habitos = require('../database/dataBase.js').Habitos;
 const Actividades = require('../database/dataBase.js').Actividades;
 const ActRealizada = require('../database/dataBase.js').ActRealizada;
 
@@ -56,7 +69,7 @@ class HabitoModel {
     }
 }
 
-module.exports = HabitoModel;
+module.exports = HabitoModel;*/
 
 
 // para guardar una nueva categoria:

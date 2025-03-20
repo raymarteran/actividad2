@@ -1,4 +1,15 @@
-const Actividades = require('../database/dataBase.js').Actividades;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const ActividadSchema = new Schema({
+  name: { type: String, required: true, unique: true },
+  idCategoria: { type: Number, required: true },
+  idUser: { type: Number, required: true }
+});
+
+module.exports = mongoose.model('Actividad', ActividadSchema);
+
+/*const Actividades = require('../database/dataBase.js').Actividades;
 const Categorias = require('../database/dataBase.js').Categorias;
 
 class ActividadModel {
@@ -35,7 +46,7 @@ class ActividadModel {
     }
 }
 
-module.exports = ActividadModel;
+module.exports = ActividadModel;*/
 
 // para guardar una nueva categoria:
 /*

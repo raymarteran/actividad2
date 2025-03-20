@@ -1,4 +1,14 @@
-const Proyectos = require('../database/dataBase.js').Proyectos;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const ProyectoSchema = new Schema({
+  name: { type: String, required: true, unique: true },
+  idActividad: { type: Number, required: true },
+  idUser: { type: Number, required: true }
+});
+
+module.exports = mongoose.model('Proyecto', ProyectoSchema);
+/*const Proyectos = require('../database/dataBase.js').Proyectos;
 const Actividades = require('../database/dataBase.js').Actividades;
 const ActRealizada = require('../database/dataBase.js').ActRealizada;
 
@@ -96,7 +106,7 @@ class ProyectoModel {
     }
 }
 
-module.exports = ProyectoModel;
+module.exports = ProyectoModel;*/
 
 // para guardar un nuevo proyecto:
 /*

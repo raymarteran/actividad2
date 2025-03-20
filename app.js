@@ -1,7 +1,15 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
 // Middleware para parsear el cuerpo de las solicitudes en formato JSON
 app.use(express.json());
+
+
+const { mongoURI } = require('./config/config.js');
+// Conectar a MongoDB
+mongoose.connect(mongoURI)
+.then(() => console.log('MongoDB conectado'))
+.catch(err => console.error('Error al conectar a MongoDB:', err));
 
 // Importar las rutas
 const routesUsers = require('./routes/users.js');

@@ -1,4 +1,19 @@
-const ActRealizada = require('../database/dataBase.js').ActRealizada;
+const mongoose = require('mongoose');
+
+const actRealizadaSchema = new mongoose.Schema({
+    id: { type: Number, required: true, unique: true },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    idActividad: { type: Number, required: true },
+    dateInicio: { type: Date, required: true },
+    dateFinal: { type: Date },
+    status: { type: String, required: true, default: 'pending' },
+    idUser: { type: Number, required: true }
+});
+
+module.exports = mongoose.model('ActRealizada', actRealizadaSchema);
+
+/*const ActRealizada = require('../database/dataBase.js').ActRealizada;
 
 class ActRealizadaModel {
     getActRealizadas() {
@@ -85,7 +100,7 @@ class ActRealizadaModel {
     }
 }
 
-module.exports = ActRealizadaModel;
+module.exports = ActRealizadaModel;/*
 
 
 // para guardar un nueva actividad realizada:

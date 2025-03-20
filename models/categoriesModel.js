@@ -1,4 +1,14 @@
-const Categorias = require('../database/dataBase.js').Categorias;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const CategoriaSchema = new Schema({
+  name: { type: String, required: true, unique: true }
+});
+
+module.exports = mongoose.model('Categoria', CategoriaSchema);
+
+
+/*const Categorias = require('../database/dataBase.js').Categorias;
 
 class CategoriesModel {
     getCategorias() {
@@ -34,7 +44,7 @@ class CategoriesModel {
     }
 }
 
-module.exports = CategoriesModel;
+module.exports = CategoriesModel;*/
 
 
 // para guardar una nueva categoria:
