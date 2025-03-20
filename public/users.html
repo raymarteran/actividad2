@@ -198,11 +198,12 @@
             fetch(`/users/${userId}`)
             .then(response => response.json())
             .then(user => {
-                document.getElementById('editUserId').value = user.id;
-                document.getElementById('editName').value = user.name;
-                document.getElementById('editLastName').value = user.lastName;
-                document.getElementById('editUserName').value = user.userName;
-                document.getElementById('editEmail').value = user.email;
+                const dataUser = user.user;
+                document.getElementById('editUserId').value = dataUser.id;
+                document.getElementById('editName').value = dataUser.name;
+                document.getElementById('editLastName').value = dataUser.lastName;
+                document.getElementById('editUserName').value = dataUser.userName;
+                document.getElementById('editEmail').value = dataUser.email;
                 document.getElementById('createUserForm').style.display = 'none';
                 document.getElementById('editUserForm').style.display = 'block';
             })

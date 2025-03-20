@@ -123,6 +123,10 @@ class UsersController {
         return new Promise(async (resolve, reject) => {
             try {
                 const user = await User.findOne({ id: id });
+                if (!user) {
+                    resolve({ status: 404, message: 'Usuario no encontrado' });
+                }
+                await User.updateOne({ id: id }, body);
                 resolve({ status: 200, message: 'Usuario actualizado correctamente', user });
             } catch (error) {
                 console.error("Error en updateUser:", error);
