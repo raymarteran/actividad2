@@ -39,6 +39,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/usersVista', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'users.html'));
+});
+
 const userModel = require('./models/userModel.js');
 const categoriesModel = require('./models/categoriesModel.js');
 //vista para usuarios
