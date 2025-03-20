@@ -48,4 +48,15 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
+router.put('/:id', (req, res, next) => {
+    actividadController.putActividad(req.params.id, req.body)
+    .then((result) => {
+        console.log("result put Actividad", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
 module.exports = router;

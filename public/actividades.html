@@ -208,8 +208,8 @@
             .then(activity => {
                 document.getElementById('editActivityId').value = activity._id;
                 document.getElementById('editActivityName').value = activity.name;
-                document.getElementById('editActivityCategory').value = activity.category._id;
-                document.getElementById('editActivityUser').value = activity.user._id;
+                document.getElementById('editActivityCategory').value = activity.idCategoria._id;
+                document.getElementById('editActivityUser').value = activity.idUser._id;
                 document.getElementById('createActivityDiv').style.display = 'none';
                 document.getElementById('editActivityDiv').style.display = 'block';
             })

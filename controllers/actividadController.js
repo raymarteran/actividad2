@@ -87,6 +87,22 @@ class ActividadController {
             }
         });
     }
+
+    putActividad(id, body) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const actividad = await Actividad.findByIdAndUpdate(id, body, { new: true });
+                if (!actividad) {
+                    resolve({ status: 404, message: 'Actividad no encontrada' });
+                } else {
+                    resolve({ status: 200, message: 'Actividad actualizada correctamente', actividad });
+                }
+            } catch (error) {
+                console.error("Error al actualizar la actividad:", error);
+                reject({ status: 500, error: 'Error al actualizar la actividad' });
+            }
+        });
+    }
 }
 
 module.exports = ActividadController;
