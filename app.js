@@ -45,6 +45,9 @@ app.get('/usersVista', (req, res) => {
 app.get('/categorias', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'categorias.html'));
 });
+app.get('/actividades', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'actividades.html'));
+})
 
 const userModel = require('./models/userModel.js');
 const categoriesModel = require('./models/categoriesModel.js');
