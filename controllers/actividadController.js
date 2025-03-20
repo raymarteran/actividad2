@@ -56,7 +56,21 @@ class ActividadController {
         });
     }
 
-    
+    deleteActividad(id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const actividad = await Actividad.findByIdAndDelete(id);
+                if (!actividad) {
+                    resolve({ status: 404, message: 'Actividad no encontrada' });
+                } else {
+                    resolve({ status: 200, message: 'Actividad eliminada correctamente' });
+                }
+            } catch (error) {
+                console.error("Error al eliminar la actividad:", error);
+                reject({ status: 500, error: 'Error al eliminar la actividad' });
+            }
+        });
+    }
 }
 
 module.exports = ActividadController;
