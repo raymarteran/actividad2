@@ -1,56 +1,50 @@
-const categoriesModel = require('../models/categoriesModel.js');
-
-const CategoriesModel = new categoriesModel();
+const Categoria = require('../models/categoriesModel.js'); // Asumiendo que tienes un modelo de Mongoose para Categorías
 
 class CategoriaController {
     getCategorias() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                const categorias = CategoriesModel.getCategorias();
-                resolve(categorias);
+                const categorias = await Categoria.find(); // Obtener todas las categorías de la base de datos
+                if (categorias.length === 0) {
+                    resolve({ status: 404, message: 'No se encontraron categorías' });
+                } else {
+                    resolve(categorias);
+                }
             } catch (error) {
-                reject(error);
+                console.error("Error al obtener categorías:", error);
+                reject({ status: 500, error: 'Error al obtener las categorías' });
             }
         });
     }
 
-    async postCategoria(body) {
-        try {
-            console.log('body', body);
-            let newCategory = body;
-    
-            // Esperar a que la promesa se resuelva
-            let allCategories = await CategoriesModel.getCategorias();
-    
-            // Asegurarse de que allCategories sea un array
-            if (!Array.isArray(allCategories)) {
-                console.log('allCategories no es un array, inicializando como array vacío');
-                allCategories = [];
+    postCategoria(body) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const newCategory = body;
+
+                // Validar que todos los campos estén completos
+                if (!newCategory.name) {
+                    reject({ status: 400, error: 'El nombre de la categoría es obligatorio' });
+                    return;
+                }
+
+                // Validar que no exista ya una categoría con el mismo nombre
+                const categoryExists = await Categoria.findOne({ name: newCategory.name });
+                if (categoryExists) {
+                    reject({ status: 400, error: 'Ya existe una categoría con ese nombre' });
+                    return;
+                }
+
+                // Guardar la nueva categoría en la base de datos
+                const categoria = new Categoria(newCategory);
+                await categoria.save();
+
+                resolve({ status: 201, message: 'Categoría creada correctamente', categoria });
+            } catch (error) {
+                console.error("Error al crear la categoría:", error);
+                reject({ status: 500, error: 'Error al crear la categoría' });
             }
-    
-            newCategory.id = allCategories.length + 1;
-    
-            console.log('allCategories', allCategories);
-    
-            // Validar que no exista ya una categoría con el mismo nombre
-            let categoryExists = allCategories.find(category => category.name === newCategory.name);
-            console.log('categoryExists', categoryExists);
-            if (categoryExists) {
-                console.log('Ya existe una categoría con ese nombre');
-                return { status: 400, message: 'Ya existe una categoría con ese nombre' };
-            } else {
-                console.log('No existe una categoría con ese nombre');
-            }
-    
-            console.log('Categoría crear', newCategory);
-    
-            // Guardar la nueva categoría
-            CategoriesModel.postCategory(newCategory);
-            return { status: 201, message: 'Categoría creada correctamente', categoria: newCategory };
-        } catch (error) {
-            console.log('Error al crear la categoría', error);
-            return { status: 500, error: 'Error al crear la categoría' };
-        }
+        });
     }
 }
 

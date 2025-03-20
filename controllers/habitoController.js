@@ -1,36 +1,37 @@
-const habitoModel = require('../models/habitoModel.js');
-
-const HabitoModel = new habitoModel();
+const HabitoModel = require('../models/habitoModel.js');
 
 class HabitoController {
+    constructor() {
+        this.habitoModel = new HabitoModel();
+    }
+
     getHabitos() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                const habitos = HabitoModel.getHabitos();
+                const habitos = await this.habitoModel.getHabitos();
                 resolve(habitos);
             } catch (error) {
-                reject(error);
+                reject({ status: 500, error: 'Error al obtener los hábitos' });
             }
         });
     }
 
     postHabito(body) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                let newHabito = body;
-                let allHabitos = HabitoModel.getHabitos();
-                newHabito.id = allHabitos.length + 1;
+                const newHabito = body;
 
                 // Validar si ya existe un hábito con el mismo nombre
-                let Exists = allHabitos.find(hab => hab.name === newHabito.name);
-                if (Exists) {
+                const habitos = await this.habitoModel.getHabitos();
+                const exists = habitos.some(hab => hab.name === newHabito.name);
+                if (exists) {
                     resolve({ status: 400, message: 'Ya existe un hábito con ese nombre' });
                     return;
                 }
 
                 // Guardar el nuevo hábito
-                HabitoModel.postHabito(newHabito);
-                resolve({ status: 201, message: 'Hábito creado correctamente', habito: newHabito });
+                const habitoCreado = await this.habitoModel.postHabito(newHabito);
+                resolve({ status: 201, message: 'Hábito creado correctamente', habito: habitoCreado });
             } catch (error) {
                 reject({ status: 500, error: 'Error al crear el hábito' });
             }
@@ -38,12 +39,12 @@ class HabitoController {
     }
 
     getHabitosNoActividadesRealizadas() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                const habitos = HabitoModel.getHabitosNoActividadesRealizadas();
+                const habitos = await this.habitoModel.getHabitosNoActividadesRealizadas();
                 resolve(habitos);
             } catch (error) {
-                reject(error);
+                reject({ status: 500, error: 'Error al obtener los hábitos sin actividades realizadas' });
             }
         });
     }

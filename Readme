@@ -27,6 +27,10 @@ Para iniciar el servidor, ejecuta el siguiente comando:
 npm start
 ```
 
+## En caso que de algun error con respecto al nodemon
+instalar el nodemon
+npm i nodemon
+
 
 
 ## Endpoints Disponibles para la API

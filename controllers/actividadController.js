@@ -1,37 +1,47 @@
-const actividadModel = require('../models/actividadModel.js');
-
-const ActividadModel = new actividadModel();
+const Actividad = require('../models/actividadModel.js'); // Asumiendo que tienes un modelo de Mongoose para Actividades
 
 class ActividadController {
     getActividades() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                const actividades = ActividadModel.getActividades();
-                resolve(actividades);
+                const actividades = await Actividad.find(); // Obtener todas las actividades de la base de datos
+                if (actividades.length === 0) {
+                    resolve({ status: 404, message: 'No se encontraron actividades' });
+                } else {
+                    resolve(actividades);
+                }
             } catch (error) {
-                reject(error);
+                console.error("Error al obtener actividades:", error);
+                reject({ status: 500, error: 'Error al obtener las actividades' });
             }
         });
     }
 
     postActividad(body) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                let newActivity = body;
-                let allActividades = ActividadModel.getActividades();
-                newActivity.id = allActividades.length + 1;
+                const newActivity = body;
 
-                // Validar que no exista ya una actividad con el mismo nombre
-                let Exists = allActividades.find(act => act.name === newActivity.name);
-                if (Exists) {
-                    reject({ status: 400, message: 'Ya existe una actividad con ese nombre' });
+                // Validar que todos los campos estén completos
+                if (!newActivity.name || !newActivity.idCategoria || !newActivity.idUser) {
+                    reject({ status: 400, error: 'Todos los campos son obligatorios' });
                     return;
                 }
 
-                // Guardar la nueva actividad
-                ActividadModel.postActividad(newActivity);
-                resolve({ status: 201, message: 'Actividad creada correctamente', actividad: newActivity });
+                // Validar que no exista ya una actividad con el mismo nombre
+                const exists = await Actividad.findOne({ name: newActivity.name });
+                if (exists) {
+                    reject({ status: 400, error: 'Ya existe una actividad con ese nombre' });
+                    return;
+                }
+
+                // Guardar la nueva actividad en la base de datos
+                const actividad = new Actividad(newActivity);
+                await actividad.save();
+
+                resolve({ status: 201, message: 'Actividad creada correctamente', actividad });
             } catch (error) {
+                console.error("Error al crear la actividad:", error);
                 reject({ status: 500, error: 'Error al crear la actividad' });
             }
         });
