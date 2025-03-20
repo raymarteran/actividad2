@@ -17,6 +17,54 @@ class CategoriaController {
         });
     }
 
+    deleteCategoria(id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const deletedCategory = await Categoria.findByIdAndDelete(id);
+                if (!deletedCategory) {
+                    reject({ status: 404, error: 'Categoría no encontrada' });
+                } else {
+                    resolve({ status: 200, message: 'Categoría eliminada correctamente' });
+                }
+            } catch (error) {
+                console.error("Error al eliminar la categoría:", error);
+                reject({ status: 500, error: 'Error al eliminar la categoría' });
+            }
+        });
+    }
+
+    getCategoria(id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const categoria = await Categoria.findById(id);
+                if (!categoria) {
+                    reject({ status: 404, error: 'Categoría no encontrada' });
+                } else {
+                    resolve(categoria);
+                }
+            } catch (error) {
+                console.error("Error al obtener la categoría:", error);
+                reject({ status: 500, error: 'Error al obtener la categoría' });
+            }
+        });
+    }
+
+    putCategoria(id, body) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const updatedCategory = await Categoria.findByIdAndUpdate(id, body, { new: true });
+                if (!updatedCategory) {
+                    reject({ status: 404, error: 'Categoría no encontrada' });
+                } else {
+                    resolve({ status: 200, message: 'Categoría actualizada correctamente', categoria: updatedCategory });
+                }
+            } catch (error) {
+                console.error("Error al actualizar la categoría:", error);
+                reject({ status: 500, error: 'Error al actualizar la categoría' });
+            }
+        });
+    }
+
     postCategoria(body) {
         return new Promise(async (resolve, reject) => {
             try {

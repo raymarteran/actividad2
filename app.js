@@ -42,6 +42,9 @@ app.get('/', (req, res) => {
 app.get('/usersVista', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'users.html'));
 });
+app.get('/categorias', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'categorias.html'));
+});
 
 const userModel = require('./models/userModel.js');
 const categoriesModel = require('./models/categoriesModel.js');
