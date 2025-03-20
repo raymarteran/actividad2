@@ -1,10 +1,13 @@
 const Actividad = require('../models/actividadModel.js'); // Asumiendo que tienes un modelo de Mongoose para Actividades
-
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+                
 class ActividadController {
     getActividades() {
         return new Promise(async (resolve, reject) => {
             try {
-                const actividades = await Actividad.find(); // Obtener todas las actividades de la base de datos
+                const actividades = await Actividad.find().populate('idCategoria').populate('idUser');
+
                 if (actividades.length === 0) {
                     resolve({ status: 404, message: 'No se encontraron actividades' });
                 } else {
@@ -21,7 +24,6 @@ class ActividadController {
         return new Promise(async (resolve, reject) => {
             try {
                 const newActivity = body;
-
                 // Validar que todos los campos estén completos
                 if (!newActivity.name || !newActivity.idCategoria || !newActivity.idUser) {
                     reject({ status: 400, error: 'Todos los campos son obligatorios' });
@@ -35,6 +37,13 @@ class ActividadController {
                     return;
                 }
 
+                //Antes de guardar convertir idCategoria y idUser a ObjectId
+                
+                newActivity.idCategoria = new ObjectId(newActivity.idCategoria);
+                newActivity.idUser = new ObjectId(newActivity.idUser);
+
+                console.log("newActivity", newActivity);
+
                 // Guardar la nueva actividad en la base de datos
                 const actividad = new Actividad(newActivity);
                 await actividad.save();
@@ -46,6 +55,8 @@ class ActividadController {
             }
         });
     }
+
+    
 }
 
 module.exports = ActividadController;

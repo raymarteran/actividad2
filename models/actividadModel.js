@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const ActividadSchema = new Schema({
   name: { type: String, required: true, unique: true },
-  idCategoria: { type: Number, required: true },
-  idUser: { type: Number, required: true }
+  idCategoria: { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria', required: true },
+  idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
 });
 
 module.exports = mongoose.model('Actividad', ActividadSchema);

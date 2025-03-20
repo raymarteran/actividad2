@@ -26,4 +26,15 @@ router.post('/', (req, res, next) => {
     });
 });
 
+router.delete('/:id', (req, res, next) => {
+    actividadController.deleteActividad(req.params.id)
+    .then((result) => {
+        console.log("result delete Actividad", result);  
+        res.send(result);
+    })
+    .catch((err) => {
+        next(err);
+    });
+});
+
 module.exports = router;

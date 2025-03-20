@@ -113,12 +113,13 @@
                 const activitiesList = document.getElementById('activitiesList');
                 activitiesList.innerHTML = '';
                 data.forEach(activity => {
+                    console.log("activity", activity)
                     const activityElement = document.createElement('li');
                     activityElement.classList.add('activity');
                     activityElement.innerHTML = `
                         <h2>${activity.name}</h2>
-                        <p>Categoría: ${activity.category.name}</p>
-                        <p>Usuario: ${activity.user.name}</p>
+                        <p>Categoría: ${activity.idCategoria.name}</p>
+                        <p>Usuario: ${activity.idUser.name} ${activity.idUser.lastname}</p>
                         <button onclick="showEditActivityForm('${activity._id}')" class="edit-button">Modificar</button>
                         <button onclick="deleteActivity('${activity._id}')" class="delete-button">Eliminar</button>
                     `;
@@ -174,13 +175,13 @@
         function createActivity(event) {
             event.preventDefault();
             const name = document.getElementById('activityName').value;
-            const category = document.getElementById('activityCategory').value;
-            const user = document.getElementById('activityUser').value;
+            const idCategoria = document.getElementById('activityCategory').value;
+            const idUser = document.getElementById('activityUser').value;
 
             const activity = {
                 name,
-                category,
-                user
+                idCategoria,
+                idUser
             };
 
             fetch('/actividad', {
