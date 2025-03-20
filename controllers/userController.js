@@ -95,7 +95,11 @@ class UsersController {
         return new Promise(async (resolve, reject) => {
             try {
                 const user = await User.findOne({ id: id });
-                resolve({ status: 200, message: 'Usuario eliminado correctamente', user });
+                if (!user) {
+                    resolve({ status: 404, message: 'Usuario no encontrado' });
+                }
+                await User.deleteOne({ id: id });
+                resolve({ status: 200, message: 'Usuario eliminado correctamente'});
             } catch (error) {
                 console.error("Error en deleteUser:", error);
                 reject({ status: 500, error: 'Error al eliminar el usuario' });

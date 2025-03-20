@@ -19,6 +19,14 @@ router.post('/', (req, res, next)=>{
     })
 });
 
+router.delete('/:id', (req, res, next) => {
+    usersController.deleteUser(req.params.id)
+    .then((result) => {
+        console.log("result delete", result);  
+        res.send(result);
+    })
+});
+
 router.get('/actividades-categoria-usuario/:id/:categoria', (req, res, next) => {
     usersController.getActividadesCategoriaUsuario(req.params.id, req.params.categoria)
     .then((result) => {
